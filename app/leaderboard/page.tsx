@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/shell/page-header'
 
 export const metadata: Metadata = {
   title: 'Security Leaderboard — PLUSE',
-  description: 'Developer and agent trust rankings by clean audit pass rate across DreamDEX event contracts.',
+  description: 'Who builds the safest markets — ranked by clean inspections.',
 }
 
 export default function LeaderboardPage() {

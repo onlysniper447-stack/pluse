@@ -1,9 +1,5 @@
 import { defineChain } from 'viem'
 
-/**
- * Somnia Mainnet — high-performance EVM L1 (chainId 5031).
- * Source: https://docs.somnia.network/developer/network-info
- */
 export const somnia = defineChain({
   id: 5031,
   name: 'Somnia Mainnet',
