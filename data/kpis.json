@@ -1,0 +1,14 @@
+{
+  "totalValueProtected": 184320000,
+  "activeContracts": 1284,
+  "flaggedExploits": 37,
+  "safetyIndex": 92.4,
+  "deltas": {
+    "tvp": 6.8,
+    "contracts": 3.2,
+    "exploits": -12.5,
+    "safety": 1.1
+  },
+  "asOfBlock": 48213907,
+  "epoch": 42
+}

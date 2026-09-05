@@ -1,0 +1,94 @@
+{
+  "breakdown": [
+    {
+      "vector": "Resolution Logic",
+      "total": 142,
+      "critical": 4,
+      "warn": 31,
+      "info": 107,
+      "description": "Ambiguity, undefined edge cases, and adversarial interpretation of settlement text."
+    },
+    {
+      "vector": "Oracle Security",
+      "total": 89,
+      "critical": 19,
+      "warn": 22,
+      "info": 48,
+      "description": "Feed centralization, stale data windows, and key custody of resolution authorities."
+    },
+    {
+      "vector": "Liquidity Slippage",
+      "total": 213,
+      "critical": 14,
+      "warn": 88,
+      "info": 111,
+      "description": "Depth vs TVL ratios, LP concentration, and exit-cost under stress scenarios."
+    }
+  ],
+  "logs": [
+    {
+      "id": "t1",
+      "ts": "2026-09-03T11:42:07Z",
+      "severity": "critical",
+      "vector": "Oracle Security",
+      "contract": "0x7dC5e6F7a8B9c0D1e2F3a4B5c6D7e8F9a0B1c2D3",
+      "message": "Resolution authority is a 2-of-3 multisig with two keys held by market creator."
+    },
+    {
+      "id": "t2",
+      "ts": "2026-09-03T11:38:51Z",
+      "severity": "critical",
+      "vector": "Oracle Security",
+      "contract": "0x9fA0b1C2d3E4f5A6b7C8d9E0f1A2b3C4d5E6f7A8",
+      "message": "Single-source price relay with no deviation threshold; manipulable via thin-liquidity venue."
+    },
+    {
+      "id": "t3",
+      "ts": "2026-09-03T11:31:19Z",
+      "severity": "warn",
+      "vector": "Resolution Logic",
+      "contract": "0x8bE21c0d9F3a4B5c6D7e8F9a0B1c2D3e4F5a6B7c",
+      "message": "Ambiguous edge case: FOMC statement revision within 24h not covered by resolution text."
+    },
+    {
+      "id": "t4",
+      "ts": "2026-09-03T11:27:44Z",
+      "severity": "warn",
+      "vector": "Liquidity Slippage",
+      "contract": "0x6bD7c8E9f0A1b2C3d4E5f6A7b8C9d0E1f2A3b4C5",
+      "message": "Order book depth < 2% of TVL at ±5%; large exits will incur >8% slippage."
+    },
+    {
+      "id": "t5",
+      "ts": "2026-09-03T11:20:02Z",
+      "severity": "info",
+      "vector": "Resolution Logic",
+      "contract": "0x4A1f9e2B7c8D3e6F0a5B1c2D3e4F5a6B7c8D9e0F",
+      "message": "Resolution clause verified against 14 adversarial scenarios. No ambiguity detected."
+    },
+    {
+      "id": "t6",
+      "ts": "2026-09-03T11:12:38Z",
+      "severity": "warn",
+      "vector": "Liquidity Slippage",
+      "contract": "0x1cD3e4F5a6B7c8D9e0F1a2B3c4D5e6F7a8B9c0D1",
+      "message": "Concentrated LP: top wallet controls 41% of pooled liquidity."
+    },
+    {
+      "id": "t7",
+      "ts": "2026-09-03T11:04:11Z",
+      "severity": "warn",
+      "vector": "Oracle Security",
+      "contract": "0x4dF9e0A1b2C3d4E5f6A7b8C9d0E1f2A3b4C5d6E7",
+      "message": "Single Pyth feed; no secondary aggregator. Stale-price window is 120s."
+    },
+    {
+      "id": "t8",
+      "ts": "2026-09-03T10:51:44Z",
+      "severity": "critical",
+      "vector": "Resolution Logic",
+      "contract": "0x1fB2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0",
+      "message": "\"Unemployment\" not pinned to U-3 vs U-6. Creator can dispute either print."
+    }
+  ]
+}

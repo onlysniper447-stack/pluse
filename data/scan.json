@@ -1,0 +1,107 @@
+{
+  "sampleInput": "// DreamDEX Event Contract — Resolution Logic\n// Market: BTC > $120,000 by Q4 close\nresolve() {\n  price = median(pyth.BTC_USD, chainlink.BTC_USD);\n  require(abs(pyth - chainlink) / price < 0.05, \"ORACLE_DIVERGENCE\");\n  if (block.timestamp >= 1767225599 && price > 120_000e8) settle(YES);\n  else if (block.timestamp >= 1767225599) settle(NO);\n}",
+  "script": [
+    {
+      "id": "s1",
+      "label": "Connecting to Somnia RPC",
+      "detail": "api.infra.mainnet.somnia.network · chainId 5031",
+      "durationMs": 500,
+      "status": "ok"
+    },
+    {
+      "id": "s2",
+      "label": "Fetching bytecode & verified source",
+      "detail": "14.2 KB · solc 0.8.26",
+      "durationMs": 800,
+      "status": "ok"
+    },
+    {
+      "id": "s3",
+      "label": "Building AST · parsing resolution nodes",
+      "detail": "47 nodes · 3 external calls · 1 settle() sink",
+      "durationMs": 1100,
+      "status": "ok"
+    },
+    {
+      "id": "s4",
+      "label": "Oracle dependency graph (multi-source check)",
+      "detail": "Pyth + Chainlink · divergence revert @ 5%",
+      "durationMs": 1000,
+      "status": "ok"
+    },
+    {
+      "id": "s5",
+      "label": "Resolution ambiguity & timestamp limits",
+      "detail": "14 adversarial scenarios · 1 timezone gap",
+      "durationMs": 1400,
+      "status": "warn"
+    },
+    {
+      "id": "s6",
+      "label": "Reentrancy & reactive contract guards",
+      "detail": "nonReentrant on settle() · no callback path",
+      "durationMs": 1100,
+      "status": "ok"
+    },
+    {
+      "id": "s7",
+      "label": "Admin key privilege concentration",
+      "detail": "48h timelock · 0 EOA resolution admins",
+      "durationMs": 900,
+      "status": "ok"
+    },
+    {
+      "id": "s8",
+      "label": "Cross-referencing exploit signatures",
+      "detail": "0 matches in 1,842 known vectors",
+      "durationMs": 700,
+      "status": "ok"
+    },
+    {
+      "id": "s9",
+      "label": "Compiling PLUSE scorecard",
+      "detail": "Weighting 30/30/20/20 across four vectors",
+      "durationMs": 500,
+      "status": "ok"
+    }
+  ],
+  "sampleResult": {
+    "score": 87,
+    "tag": "Pass",
+    "vectors": { "oracle": 96, "resolution": 82, "reentrancy": 94, "admin": 91 },
+    "oracleQuorum": "PASSED",
+    "liquidityUsd": 184500,
+    "liquidityDeployed": true,
+    "holders": [
+      { "address": "0x7dC5e6F7a8B9c0D1e2F3a4B5c6D7e8F9a0B1c2D3", "tag": "Pool Creator", "share": 72.4, "usd": 133578 },
+      { "address": "0x4A1f9e2B7c8D3e6F0a5B1c2D3e4F5a6B7c8D9e0F", "tag": "Public Pool", "share": 18.1, "usd": 33394 },
+      { "address": "0xB2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0c1", "tag": "Big Wallet", "share": 9.5, "usd": 17528 }
+    ],
+    "findings": [
+      {
+        "severity": "pass",
+        "category": "oracle",
+        "title": "Dual-feed oracle with deviation guard",
+        "description": "Resolution reads Pyth + Chainlink and reverts on >5% divergence."
+      },
+      {
+        "severity": "warn",
+        "category": "resolution",
+        "title": "Ambiguous timezone in resolution text",
+        "description": "\"Q4 close\" is not pinned to UTC. Recommend an explicit ISO-8601 timestamp."
+      },
+      {
+        "severity": "pass",
+        "category": "reentrancy",
+        "title": "Settlement is non-reentrant",
+        "description": "settle() is gated by a mutex; no external callback can re-enter payout."
+      },
+      {
+        "severity": "pass",
+        "category": "admin",
+        "title": "No privileged EOA resolution path",
+        "description": "Admin functions sit behind a 48h timelock with a public queue."
+      }
+    ]
+  }
+}

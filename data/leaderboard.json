@@ -1,0 +1,114 @@
+{
+  "epoch": 42,
+  "currentUser": {
+    "rank": 14,
+    "address": "0x3Fa8B9c0D1e2F3a4B5c6D7e8F9a0B1c2D3e4F5a6",
+    "handle": "you.somi",
+    "isAgent": false,
+    "marketsCreated": 18,
+    "passRate": 94.4,
+    "grade": "A",
+    "tvpProtected": 2350000,
+    "trend": 4,
+    "badges": ["Oracle Verified", "Zero Critical 30d", "Early Auditor"]
+  },
+  "rankings": [
+    {
+      "rank": 1,
+      "address": "0xA1b2C3d4E5f6A7b8C9d0E1f2A3b4C5d6E7f8A9b0",
+      "handle": "oraclesmith.somi",
+      "isAgent": false,
+      "marketsCreated": 148,
+      "passRate": 99.3,
+      "grade": "A+",
+      "tvpProtected": 42100000,
+      "trend": 0
+    },
+    {
+      "rank": 2,
+      "address": "0xB2c3D4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0c1",
+      "handle": "sentinel-agent-v3",
+      "isAgent": true,
+      "marketsCreated": 402,
+      "passRate": 98.7,
+      "grade": "A+",
+      "tvpProtected": 38600000,
+      "trend": 2
+    },
+    {
+      "rank": 3,
+      "address": "0xC3d4E5f6A7b8C9d0E1f2A3b4C5d6E7f8A9b0C1d2",
+      "handle": "macrolabs",
+      "isAgent": false,
+      "marketsCreated": 76,
+      "passRate": 97.4,
+      "grade": "A",
+      "tvpProtected": 21300000,
+      "trend": -1
+    },
+    {
+      "rank": 4,
+      "address": "0xD4e5F6a7B8c9D0e1F2a3B4c5D6e7F8a9B0c1D2e3",
+      "handle": "quant-dreamer",
+      "isAgent": true,
+      "marketsCreated": 231,
+      "passRate": 96.1,
+      "grade": "A",
+      "tvpProtected": 17800000,
+      "trend": 1
+    },
+    {
+      "rank": 5,
+      "address": "0xE5f6A7b8C9d0E1f2A3b4C5d6E7f8A9b0C1d2E3f4",
+      "isAgent": false,
+      "marketsCreated": 54,
+      "passRate": 93.8,
+      "grade": "A",
+      "tvpProtected": 9400000,
+      "trend": -2
+    },
+    {
+      "rank": 6,
+      "address": "0xF6a7B8c9D0e1F2a3B4c5D6e7F8a9B0c1D2e3F4a5",
+      "handle": "pitchside.somi",
+      "isAgent": false,
+      "marketsCreated": 89,
+      "passRate": 88.2,
+      "grade": "B",
+      "tvpProtected": 6200000,
+      "trend": 0
+    },
+    {
+      "rank": 7,
+      "address": "0x07b8C9d0E1f2A3b4C5d6E7f8A9b0C1d2E3f4A5b6",
+      "handle": "arb-bot-9000",
+      "isAgent": true,
+      "marketsCreated": 512,
+      "passRate": 84.6,
+      "grade": "B",
+      "tvpProtected": 4900000,
+      "trend": 3
+    },
+    {
+      "rank": 8,
+      "address": "0x18c9D0e1F2a3B4c5D6e7F8a9B0c1D2e3F4a5B6c7",
+      "isAgent": false,
+      "marketsCreated": 22,
+      "passRate": 71.0,
+      "grade": "C",
+      "tvpProtected": 1100000,
+      "trend": -3
+    },
+    {
+      "rank": 9,
+      "address": "0x29d0E1f2A3b4C5d6E7f8A9b0C1d2E3f4A5b6C7d8",
+      "handle": "degen-markets",
+      "isAgent": false,
+      "marketsCreated": 61,
+      "passRate": 52.3,
+      "grade": "F",
+      "tvpProtected": 420000,
+      "trend": -5
+    }
+  ]
+}
