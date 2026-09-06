@@ -6,9 +6,18 @@ import threatsJson from '@/data/threats.json'
 
 export type RiskLevel = 'safe' | 'low' | 'medium' | 'high' | 'critical'
 export type MarketCategory = 'Sports' | 'Crypto' | 'Macro' | 'Politics' | 'Culture'
-export type ScoreTag = 'Pass' | 'Warning' | 'Adversarial Hazard'
+export type ScoreTag = 'Pass' | 'Warning' | 'Adversarial Hazard' | 'Not a contract'
 export type Grade = 'A+' | 'A' | 'B' | 'C' | 'F'
-export type FindingCategory = 'oracle' | 'resolution' | 'reentrancy' | 'admin'
+export type FindingCategory =
+  | 'oracle'
+  | 'resolution'
+  | 'reentrancy'
+  | 'admin'
+  | 'mint'
+  | 'tax'
+  | 'blacklist'
+  | 'honeypot'
+export type TargetKind = 'eoa' | 'prediction-market' | 'erc20' | 'erc721' | 'generic' | 'source'
 
 export interface EventContract {
   id: string
@@ -57,28 +66,44 @@ export interface ScanStep {
   label: string
   detail?: string
   durationMs: number
-  status: 'ok' | 'warn' | 'fail'
+  status: 'ok' | 'warn' | 'fail' | 'skipped' | 'skipped_na'
 }
 
-export type EntityTag = 'Pool Creator' | 'Public Pool' | 'Big Wallet'
+export type EntityTag = 'Pool Creator' | 'Public Pool' | 'Big Wallet' | 'Wallet' | 'Native'
 
 export interface LiquidityHolder {
   address: `0x${string}`
   tag: EntityTag
   share: number
   usd: number
+  amountStt?: number
+}
+
+export interface ScanVectors {
+  oracle: number | null
+  resolution: number | null
+  reentrancy: number | null
+  admin: number | null
+  mint?: number | null
+  tax?: number | null
+  blacklist?: number | null
+  honeypot?: number | null
 }
 
 export interface ScanResult {
-  score: number
+  score: number | null
   tag: ScoreTag
-  vectors: { oracle: number; resolution: number; reentrancy: number; admin: number }
-  oracleQuorum: 'PASSED' | 'WARNING'
+  kind?: TargetKind
+  skipped?: FindingCategory[]
+  notice?: string
+  address?: string
+  vectors: ScanVectors
+  oracleQuorum: 'PASSED' | 'WARNING' | 'N/A'
   liquidityUsd: number
   liquidityDeployed: boolean
   holders: LiquidityHolder[]
   findings: {
-    severity: 'pass' | 'warn' | 'critical'
+    severity: 'pass' | 'warn' | 'critical' | 'skipped'
     category: FindingCategory
     title: string
     description: string
@@ -106,7 +131,36 @@ export const findingCategories: { id: FindingCategory; title: string; blurb: str
     title: 'Admin Key Privilege Concentration',
     blurb: 'EOA admins, timelocks, and resolution-authority custody.',
   },
+  {
+    id: 'mint',
+    title: 'Minting / Burn Privilege Concentration',
+    blurb: 'Uncapped mint, hidden minters, and burn rights.',
+  },
+  {
+    id: 'tax',
+    title: 'Tax & Fee Manipulation Limits',
+    blurb: 'Post-deployment fee changes that can trap holders.',
+  },
+  {
+    id: 'blacklist',
+    title: 'Blacklist / Pausable Function Vectors',
+    blurb: 'Admin freeze, pause, and address-level transfer bans.',
+  },
+  {
+    id: 'honeypot',
+    title: 'Honeypot & Transfer Restriction Checks',
+    blurb: 'Sell path, max-tx, and hidden transfer modifiers.',
+  },
 ]
+
+export function categoriesFor(result: ScanResult) {
+  const skipped = new Set(result.skipped ?? [])
+  const present = new Set(result.findings.map((f) => f.category))
+  return findingCategories.filter((c) => {
+    const vector = result.vectors[c.id as keyof ScanResult['vectors']]
+    return present.has(c.id) || skipped.has(c.id) || vector != null
+  })
+}
 
 export const kpis = kpisJson as SystemKpis
 export const contracts = contractsJson as EventContract[]
@@ -160,9 +214,8 @@ export const riskShort: Record<RiskLevel, string> = {
 
 export function auditBadges(entry: LeaderboardEntry): string[] {
   const badges: string[] = []
-  if (entry.grade === 'A+' || entry.passRate >= 98) badges.push('Oracle Verified')
-  if (entry.passRate >= 95) badges.push('Zero Critical')
-  if (entry.isAgent) badges.push('Agent')
+  if (entry.grade === 'A+' || entry.passRate >= 98) badges.push('Oracle Master')
+  if (entry.passRate >= 95) badges.push('Zero Exploits')
   if (entry.rank <= 3) badges.push('Top Auditor')
   if (entry.marketsCreated >= 200) badges.push('High Volume')
   return badges

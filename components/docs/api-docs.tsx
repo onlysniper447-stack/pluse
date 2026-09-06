@@ -28,7 +28,7 @@ const endpoints: Endpoint[] = [
     auth: 'api-key',
     request: `{
   "target": "0x4A1f9e2B7c8D3e6F0a5B1c2D3e4F5a6B7c8D9e0F",
-  "chainId": 5031,
+  "chainId": 50312,
   "depth": "full",          // "quick" | "full"
   "vectors": ["oracle", "resolution", "reentrancy", "admin"]
 }`,

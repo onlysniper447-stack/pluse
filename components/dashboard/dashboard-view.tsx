@@ -14,7 +14,10 @@ export function DashboardView() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="Risk Dashboard" description="A simple map of which pools look safe, and which do not." />
+      <PageHeader
+        title="Risk Dashboard"
+        description="DreamDEX event contracts on Somnia Shannon Testnet, grouped by sector and inspection score."
+      />
       <TimeHorizon value={horizon} onChange={setHorizon} />
       <MetricGrid horizon={horizon} />
       <RiskHeatmap horizon={horizon} filter={cell} onFilter={setCell} />

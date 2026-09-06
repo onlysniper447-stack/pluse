@@ -2,58 +2,64 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { PanelLeft } from 'lucide-react'
-import { navItems } from '@/lib/nav'
-import { navIndicatorTransition } from '@/lib/motion'
+import { Menu, X } from 'lucide-react'
+import { isNavActive, navItems } from '@/lib/nav'
 import { ConnectButton } from '@/components/web3/connect-button'
-import { useI18n, localeMeta } from '@/lib/i18n'
+import { useI18n } from '@/lib/i18n'
+import { Button } from '@/components/ui/button'
 import { BrandMark } from './brand-mark'
+import { NetworkBadge } from './network-badge'
 import { useShell } from './shell-context'
 import { cn } from '@/lib/utils'
 
 export function TopBar() {
   const pathname = usePathname()
-  const { toggleSidebar } = useShell()
-  const { t, locale } = useI18n()
+  const { sidebarOpen, toggleSidebar } = useShell()
+  const { t } = useI18n()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-[#0A0C10]/88 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-3 px-4 lg:px-6">
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          className="flex h-9 items-center gap-2 rounded-md border border-slate-800 bg-slate-900/60 px-2.5 text-[11px] font-medium tracking-tight text-foreground transition-transform hover:border-emerald/40 hover:scale-[1.01]"
-          aria-label={t('shell.menu')}
-        >
-          <PanelLeft className="size-4" />
-          <span className="font-mono">[=]</span>
-        </button>
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0A0C10]/80 shadow-[0_1px_0_0_rgba(52,211,153,0.12)] backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-[1600px] items-center justify-between gap-3 px-4 md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:px-6">
+        <div className="flex min-w-0 items-center gap-2 justify-self-start">
+          <Button
+            type="button"
+            variant="outline"
+            nativeButton
+            onClick={toggleSidebar}
+            aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={sidebarOpen}
+            className="h-9 gap-2 border-emerald-400/30 bg-emerald-400/10 px-3 text-emerald-200 hover:border-emerald-400/60 hover:text-emerald-100"
+          >
+            {sidebarOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            <span className="text-xs font-semibold tracking-wide md:hidden">Menu</span>
+          </Button>
+          <BrandMark />
+        </div>
 
-        <BrandMark />
-
-        <nav aria-label="Primary" className="hidden min-w-0 flex-1 justify-center md:flex">
-          <ul className="relative flex items-center">
-            {navItems.map((item) => {
-              const active = pathname === item.href
+        <nav aria-label="Primary" className="hidden md:flex">
+          <ul className="flex items-center">
+            {navItems.map((item, index) => {
+              const active = isNavActive(pathname, item.href)
               return (
-                <li key={item.href} className="relative">
+                <li key={item.href} className="flex items-center">
+                  {index > 0 && (
+                    <span className="px-1.5 font-mono text-[11px] text-slate-600" aria-hidden>
+                      |
+                    </span>
+                  )}
                   <Link
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'relative flex h-10 items-center gap-1.5 px-3 text-[11px] font-medium tracking-tight transition-colors',
-                      active ? 'text-emerald' : 'text-muted-foreground hover:text-foreground',
+                      'relative flex h-10 items-center px-2.5 text-[13px] font-medium tracking-tight transition-all duration-200',
+                      active
+                        ? 'text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.85)]'
+                        : 'text-slate-400 hover:text-emerald-300 hover:drop-shadow-[0_0_8px_rgba(52,211,153,0.55)]',
                     )}
                   >
-                    <span className="font-mono text-[10px] text-muted-foreground">{item.index}.</span>
                     {t(item.labelKey)}
                     {active && (
-                      <motion.span
-                        layoutId="nav-active"
-                        transition={navIndicatorTransition}
-                        className="absolute inset-x-3 -bottom-px h-px bg-emerald shadow-glow-emerald"
-                      />
+                      <span className="absolute inset-x-2.5 -bottom-px h-px bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
                     )}
                   </Link>
                 </li>
@@ -62,26 +68,16 @@ export function TopBar() {
           </ul>
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            onClick={toggleSidebar}
-            className="hidden h-9 items-center rounded-full border border-slate-800 bg-slate-900/60 px-2.5 font-mono text-[11px] text-emerald sm:flex"
-            title={t('shell.language')}
-          >
-            {localeMeta[locale].pill}
-          </button>
-          <div className="hidden sm:block">
+        <div className="flex items-center justify-end gap-2 justify-self-end">
+          <div className="hidden items-center gap-2 md:flex">
+            <NetworkBadge />
             <ConnectButton />
           </div>
-          <div className="sm:hidden">
+          <div className="md:hidden">
             <ConnectButton compact />
           </div>
         </div>
       </div>
-      <p className="border-t border-slate-800/60 px-4 py-1.5 text-center text-[12px] leading-snug text-muted-foreground sm:text-sm">
-        {t('slogan')}
-      </p>
     </header>
   )
 }

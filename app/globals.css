@@ -46,47 +46,48 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-:root {
+:root,
+.dark {
   color-scheme: dark;
   --radius: 0.5rem;
 
-  --background: #0a0c10;
-  --surface: #121620;
+  --background: #0A0C10;
+  --surface: #0A0C10;
   --foreground: #e8edf5;
 
-  --card: rgba(18, 22, 32, 0.6);
+  --card: #0A0C10;
   --card-foreground: #e8edf5;
-  --popover: #121620;
+  --popover: #0A0C10;
   --popover-foreground: #e8edf5;
 
-  --emerald: #00f080;
-  --primary: #00f080;
+  --emerald: #34d399;
+  --primary: #34d399;
   --primary-foreground: #0b0e14;
-  --secondary: #00f080;
-  --secondary-foreground: #0b0e14;
+  --secondary: #1e293b;
+  --secondary-foreground: #e8edf5;
 
-  --low: #00e5ff;
-  --cyan: #00e5ff;
-  --amber: #ffb800;
-  --high: #ff6b00;
-  --crimson: #ff3b3b;
-  --destructive: #ff3b3b;
-  --destructive-foreground: #e8edf5;
+  --low: #22d3ee;
+  --cyan: #22d3ee;
+  --amber: #fbbf24;
+  --high: #fb923c;
+  --crimson: #f87171;
+  --destructive: #f87171;
+  --destructive-foreground: #0b0e14;
 
-  --muted: #1a2230;
-  --muted-foreground: #8b95a7;
-  --accent: rgba(0, 240, 128, 0.08);
-  --accent-foreground: #00f080;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: rgba(52, 211, 153, 0.1);
+  --accent-foreground: #34d399;
 
-  --border: rgba(30, 41, 59, 0.8);
-  --input: #1a2230;
-  --ring: rgba(0, 240, 128, 0.5);
+  --border: rgba(30, 41, 59, 0.9);
+  --input: #1e293b;
+  --ring: rgba(52, 211, 153, 0.45);
 
-  --chart-1: #00f080;
-  --chart-2: #00e5ff;
-  --chart-3: #ffb800;
-  --chart-4: #ff6b00;
-  --chart-5: #ff3b3b;
+  --chart-1: #34d399;
+  --chart-2: #22d3ee;
+  --chart-3: #fbbf24;
+  --chart-4: #fb923c;
+  --chart-5: #f87171;
 }
 
 @layer base {
@@ -98,11 +99,10 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased tracking-tight;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 240, 128, 0.07), transparent 55%),
-      radial-gradient(ellipse 40% 30% at 100% 0%, rgba(0, 229, 255, 0.04), transparent 40%),
-      linear-gradient(to bottom, #0a0c10, #0d1118);
-    background-attachment: fixed;
+    background: #0A0C10;
+  }
+  .dark body {
+    background: #0A0C10;
   }
   h1,
   h2,

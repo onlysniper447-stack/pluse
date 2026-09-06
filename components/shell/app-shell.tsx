@@ -2,18 +2,16 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { AnimatePresence } from 'framer-motion'
 import { WalletProvider } from '@/components/web3/wallet-provider'
 import { I18nProvider } from '@/lib/i18n'
 import { TopBar } from './top-bar'
 import { MobileDock } from './mobile-dock'
-import { StatusTicker } from './status-ticker'
+import { NetworkStats } from './network-stats'
 import { Sidebar } from './sidebar'
-import { ShellProvider, useShell } from './shell-context'
+import { ShellProvider } from './shell-context'
 
 function ShellInner({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const { sidebarOpen } = useShell()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -36,12 +34,12 @@ function ShellInner({ children }: { children: React.ReactNode }) {
         Skip to workspace
       </a>
       <TopBar />
-      <StatusTicker />
+      <NetworkStats />
       <main id="main" className="mx-auto w-full max-w-[1600px] flex-1 px-4 pb-24 pt-6 lg:pb-10 lg:px-6">
         {children}
       </main>
       <MobileDock />
-      <AnimatePresence>{sidebarOpen && <Sidebar />}</AnimatePresence>
+      <Sidebar />
     </div>
   )
 }

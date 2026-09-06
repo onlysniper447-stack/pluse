@@ -4,7 +4,7 @@
     {
       "id": "s1",
       "label": "Connecting to Somnia RPC",
-      "detail": "api.infra.mainnet.somnia.network · chainId 5031",
+      "detail": "api.infra.testnet.somnia.network · chainId 50312",
       "durationMs": 500,
       "status": "ok"
     },

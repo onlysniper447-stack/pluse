@@ -24,7 +24,7 @@ export function StatusTicker() {
             BLOCK <span className="text-foreground tabular-nums">#{block.toLocaleString('en-US')}</span>
           </span>
           <span className="hidden sm:inline">
-            GAS <span className="text-foreground">0.0004 SOMI</span>
+            GAS <span className="text-foreground">0.0004 STT</span>
           </span>
           <span className="hidden text-emerald md:inline">FINALITY 412ms</span>
         </div>

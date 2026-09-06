@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ScanSearch } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Panel, PanelHeader, Tag } from '@/components/ui/panel'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatUsd, shortAddr, riskLabel } from '@/lib/mock-data'
 import { isNew, rankedContracts, type Horizon } from '@/lib/dashboard-data'
-import { fadeUp, staggerContainer } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import type { CellFilter } from './risk-heatmap'
 
@@ -84,107 +85,98 @@ export function SafetyRankings({ horizon, cell }: { horizon: Horizon; cell: Cell
         eyebrow="Standings"
         title="Contract safety rankings"
         action={
-          <div className="flex flex-wrap justify-end gap-1">
-            {tabs.map((tb) => (
-              <button
-                key={tb.id}
-                type="button"
-                onClick={() => setTab(tb.id)}
-                className={cn(
-                  'h-7 rounded-md px-2.5 font-mono text-[10px] uppercase tracking-wider transition-colors',
-                  tab === tb.id ? 'bg-emerald/15 text-emerald' : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {tb.label}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            value={tab}
+            onValueChange={(next) => {
+              if (next === 'safest' || next === 'risk' || next === 'new') setTab(next)
+            }}
+          >
+            <TabsList className="h-7">
+              {tabs.map((tb) => (
+                <TabsTrigger key={tb.id} value={tb.id} className="px-2 font-mono text-[10px] uppercase">
+                  {tb.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         }
       />
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[880px] text-left text-sm">
-          <thead>
-            <tr className="border-b border-slate-800 text-[11px] text-muted-foreground">
-              <th className="px-4 py-2.5 font-medium">Rank · Contract</th>
-              <th className="px-4 py-2.5 font-medium">Safety score</th>
-              <th className="px-4 py-2.5 font-medium">Price verification</th>
-              <th className="px-4 py-2.5 font-medium">Money control risk</th>
-              <th className="px-4 py-2.5 text-right font-medium">Action</th>
-            </tr>
-          </thead>
-          <AnimatePresence mode="wait">
-            <motion.tbody
-              key={`${horizon}-${tab}-${cell?.category ?? 'all'}-${cell?.risk ?? 'all'}`}
-              variants={staggerContainer}
-              initial="hidden"
-              animate="show"
-            >
-              {rows.map((c, i) => {
-                const money =
-                  c.topShare > 50
-                    ? `CRITICAL: Top wallet holds ${c.topShare.toFixed(0)}%`
-                    : c.topShare > 30
-                      ? `Caution: Top wallet holds ${c.topShare.toFixed(0)}%`
-                      : `Safe: Top wallet holds ${c.topShare.toFixed(0)}%`
-                return (
-                  <motion.tr
-                    key={c.id}
-                    variants={fadeUp}
-                    className="border-b border-slate-800/60 last:border-0 hover:bg-accent/50"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-start gap-3">
-                        <span className="font-mono text-sm font-bold tabular-nums text-muted-foreground">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                        <div>
-                          <p className="font-medium tracking-tight text-foreground">{c.title}</p>
-                          <p className="font-mono text-[11px] text-muted-foreground">{shortAddr(c.address, 6)}</p>
-                          <p className="mt-0.5 text-[11px] text-muted-foreground">
-                            {c.category} · {formatUsd(c.tvlWindow)} locked · {riskLabel[c.risk]}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <ScoreBadge score={c.score} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Tag tone={c.feeds >= 2 ? 'emerald' : 'amber'}>{c.feedLabel}</Tag>
-                    </td>
-                    <td className="px-4 py-3">
-                      <p
-                        className={cn(
-                          'text-xs leading-relaxed',
-                          c.topShare > 50 ? 'text-crimson' : c.topShare > 30 ? 'text-amber' : 'text-emerald',
-                        )}
-                      >
-                        {money}
+      <Table className="min-w-[880px]">
+        <TableHeader>
+          <TableRow className="text-[11px] text-muted-foreground hover:bg-transparent">
+            <TableHead className="px-4">Rank · Contract</TableHead>
+            <TableHead className="px-4">Safety score</TableHead>
+            <TableHead className="px-4">Price verification</TableHead>
+            <TableHead className="px-4">Money control risk</TableHead>
+            <TableHead className="px-4 text-right">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rows.map((c, i) => {
+            const money =
+              c.topShare > 50
+                ? `CRITICAL: Top wallet holds ${c.topShare.toFixed(0)}%`
+                : c.topShare > 30
+                  ? `Caution: Top wallet holds ${c.topShare.toFixed(0)}%`
+                  : `Safe: Top wallet holds ${c.topShare.toFixed(0)}%`
+            return (
+              <TableRow key={c.id}>
+                <TableCell className="px-4 py-3 whitespace-normal">
+                  <div className="flex items-start gap-3">
+                    <span className="font-mono text-sm font-bold tabular-nums text-muted-foreground">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <p className="font-medium tracking-tight text-foreground">{c.title}</p>
+                      <p className="font-mono text-[11px] text-muted-foreground">{shortAddr(c.address, 6)}</p>
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">
+                        {c.category} · {formatUsd(c.tvlWindow)} locked · {riskLabel[c.risk]}
                       </p>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link
-                        href={`/?target=${c.address}`}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-md border border-emerald/40 bg-emerald/10 px-2.5 text-[11px] font-medium text-emerald transition-transform hover:scale-[1.01]"
-                      >
-                        <ScanSearch className="size-3.5" />
-                        Inspect Contract
-                      </Link>
-                    </td>
-                  </motion.tr>
-                )
-              })}
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                    No pools in this view for the selected time window.
-                  </td>
-                </tr>
-              )}
-            </motion.tbody>
-          </AnimatePresence>
-        </table>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <ScoreBadge score={c.score} />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <Tag tone={c.feeds >= 2 ? 'emerald' : 'amber'}>{c.feedLabel}</Tag>
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <p
+                    className={cn(
+                      'text-xs leading-relaxed whitespace-normal',
+                      c.topShare > 50 ? 'text-crimson' : c.topShare > 30 ? 'text-amber' : 'text-emerald',
+                    )}
+                  >
+                    {money}
+                  </p>
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <Button
+                    nativeButton={false}
+                    size="sm"
+                    variant="outline"
+                    render={<Link href={`/?target=${c.address}`} />}
+                    className="border-primary/40 bg-primary/10 text-primary"
+                  >
+                    <ScanSearch className="size-3.5" />
+                    Inspect
+                  </Button>
+                </TableCell>
+              </TableRow>
+            )
+          })}
+          {rows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+                No pools in this view for the selected time window.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
       </div>
     </Panel>
   )

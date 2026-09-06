@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { scanScript, type ScanResult, type ScanStep } from '@/lib/mock-data'
-import { resolveScan } from '@/lib/scan-resolver'
+import { type ScanResult, type ScanStep } from '@/lib/mock-data'
+import { inspectTarget } from '@/lib/inspection/inspect'
 
 export type ScanPhase = 'idle' | 'scanning' | 'complete'
 
@@ -24,6 +24,7 @@ export function useScanEngine() {
   const [result, setResult] = useState<ScanResult | null>(null)
   const [progress, setProgress] = useState(0)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const generation = useRef(0)
 
   const clear = () => {
     timers.current.forEach(clearTimeout)
@@ -34,6 +35,7 @@ export function useScanEngine() {
 
   const reset = useCallback(() => {
     clear()
+    generation.current += 1
     setPhase('idle')
     setLogs([])
     setResult(null)
@@ -42,50 +44,75 @@ export function useScanEngine() {
 
   const run = useCallback((input: string) => {
     clear()
-    const payload = resolveScan(input)
+    const gen = ++generation.current
     setPhase('scanning')
     setResult(null)
-    setProgress(0)
+    setProgress(4)
     setLogs([
       {
         id: 'boot',
         ts: stamp(),
-        text: `PLUSE agent v2.4.1 · target ${input.trim().startsWith('0x') ? input.trim().slice(0, 10) + '…' : 'inline resolution logic'}`,
+        text: `PLUSE inspector · target ${input.trim().startsWith('0x') ? input.trim().slice(0, 10) + '…' : 'inline source'}`,
         status: 'ok',
       },
     ])
 
-    let elapsed = 250
-    scanScript.forEach((step, i) => {
-      timers.current.push(
-        setTimeout(() => {
-          setLogs((l) => [...l, { id: step.id, ts: stamp(), text: step.label, status: 'pending' }])
-        }, elapsed),
-      )
-      elapsed += step.durationMs
-      timers.current.push(
-        setTimeout(() => {
-          setLogs((l) => l.map((e) => (e.id === step.id ? { ...e, status: step.status, detail: step.detail } : e)))
-          setProgress(Math.round(((i + 1) / scanScript.length) * 100))
-        }, elapsed),
-      )
-    })
+    void inspectTarget(input)
+      .then(({ result: payload, steps }) => {
+      if (generation.current !== gen) return
 
-    timers.current.push(
-      setTimeout(() => {
-        setResult(payload)
+      let elapsed = 180
+      steps.forEach((entry, i) => {
+        timers.current.push(
+          setTimeout(() => {
+            if (generation.current !== gen) return
+            setLogs((l) => [...l, { id: entry.id, ts: stamp(), text: entry.label, status: 'pending' }])
+          }, elapsed),
+        )
+        elapsed += entry.durationMs
+        timers.current.push(
+          setTimeout(() => {
+            if (generation.current !== gen) return
+            setLogs((l) => l.map((e) => (e.id === entry.id ? { ...e, status: entry.status, detail: entry.detail } : e)))
+            setProgress(Math.round(((i + 1) / steps.length) * 100))
+          }, elapsed),
+        )
+      })
+
+      timers.current.push(
+        setTimeout(() => {
+          if (generation.current !== gen) return
+          setResult(payload)
+          setPhase('complete')
+          const scoreLabel = payload.score == null ? 'N/A' : `${payload.score}/100`
+          setLogs((l) => [
+            ...l,
+            {
+              id: 'done',
+              ts: stamp(),
+              text: `Inspection complete · score ${scoreLabel} · ${payload.tag}`,
+              status:
+                payload.kind === 'eoa'
+                  ? 'skipped_na'
+                  : payload.tag === 'Adversarial Hazard'
+                    ? 'fail'
+                    : payload.tag === 'Warning'
+                      ? 'warn'
+                      : 'ok',
+            },
+          ])
+        }, elapsed + 240),
+      )
+      })
+      .catch((err: unknown) => {
+        if (generation.current !== gen) return
+        const message = err instanceof Error ? err.message : 'Inspection failed'
         setPhase('complete')
         setLogs((l) => [
           ...l,
-          {
-            id: 'done',
-            ts: stamp(),
-            text: `Scan complete · score ${payload.score}/100 · ${payload.tag.toUpperCase()}`,
-            status: payload.tag === 'Adversarial Hazard' ? 'fail' : payload.tag === 'Warning' ? 'warn' : 'ok',
-          },
+          { id: 'err', ts: stamp(), text: 'Inspection aborted', detail: message, status: 'fail' },
         ])
-      }, elapsed + 300),
-    )
+      })
   }, [])
 
   return { phase, logs, result, progress, run, reset }

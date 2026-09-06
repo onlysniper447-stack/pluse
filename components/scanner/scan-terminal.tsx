@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Terminal, CircleCheck, TriangleAlert, CircleAlert } from 'lucide-react'
+import { Terminal, CircleCheck, TriangleAlert, CircleAlert, Circle } from 'lucide-react'
 import { Panel, PanelHeader, Tag } from '@/components/ui/panel'
 import { logLine, scanStateVariants } from '@/lib/motion'
 import type { LogEntry, ScanPhase } from './use-scan-engine'
@@ -17,9 +17,35 @@ interface Props {
 function StatusGlyph({ status }: { status: LogEntry['status'] }) {
   if (status === 'pending')
     return <span className="inline-block size-3 animate-spin rounded-full border border-emerald/60 border-t-transparent" />
-  if (status === 'ok') return <CircleCheck className="size-3.5 text-emerald" />
-  if (status === 'warn') return <TriangleAlert className="size-3.5 text-amber" />
+  if (status === 'ok') return <CircleCheck className="size-3.5 text-emerald-400" />
+  if (status === 'warn') return <TriangleAlert className="size-3.5 text-amber-400" />
+  if (status === 'skipped' || status === 'skipped_na') return <Circle className="size-3.5 text-slate-500" />
   return <CircleAlert className="size-3.5 text-crimson" />
+}
+
+function CheckBadge({ status }: { status: LogEntry['status'] }) {
+  if (status === 'ok') {
+    return (
+      <span className="ml-2 inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-emerald-400">
+        PASSED
+      </span>
+    )
+  }
+  if (status === 'warn' || status === 'fail') {
+    return (
+      <span className="ml-2 inline-flex rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-400">
+        WARNING
+      </span>
+    )
+  }
+  if (status === 'skipped' || status === 'skipped_na') {
+    return (
+      <span className="ml-2 inline-flex rounded-full border border-slate-600/40 bg-slate-800/80 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-slate-500">
+        SKIPPED_NA
+      </span>
+    )
+  }
+  return null
 }
 
 export function ScanTerminal({ logs, phase, progress }: Props) {
@@ -82,11 +108,13 @@ export function ScanTerminal({ logs, phase, progress }: Props) {
                       className={cn(
                         entry.status === 'pending' && 'text-foreground/80',
                         entry.status === 'ok' && 'text-foreground',
-                        entry.status === 'warn' && 'text-amber',
+                        entry.status === 'warn' && 'text-amber-400',
+                        (entry.status === 'skipped' || entry.status === 'skipped_na') && 'text-slate-500',
                         entry.status === 'fail' && 'text-crimson',
                       )}
                     >
                       {entry.text}
+                      <CheckBadge status={entry.status} />
                       {entry.status === 'pending' && <span className="text-muted-foreground">…</span>}
                       {entry.detail && <span className="ml-2 text-muted-foreground">› {entry.detail}</span>}
                     </span>

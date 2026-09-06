@@ -1,4 +1,5 @@
 import type { Grade } from '@/lib/mock-data'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 const tone: Record<Grade, string> = {
@@ -11,15 +12,16 @@ const tone: Record<Grade, string> = {
 
 export function GradeBadge({ grade, size = 'sm' }: { grade: Grade; size?: 'sm' | 'lg' }) {
   return (
-    <span
+    <Badge
+      variant="outline"
+      aria-label={`Grade ${grade}`}
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-md border font-mono font-bold',
-        size === 'sm' ? 'h-7 min-w-9 px-1.5 text-xs' : 'size-14 text-2xl',
+        'rounded-md font-mono font-bold',
+        size === 'sm' ? 'h-7 min-w-9 px-1.5 text-xs' : 'size-14 rounded-lg text-2xl',
         tone[grade],
       )}
-      aria-label={`Grade ${grade}`}
     >
       {grade}
-    </span>
+    </Badge>
   )
 }

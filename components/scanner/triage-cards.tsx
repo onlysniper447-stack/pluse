@@ -25,11 +25,15 @@ function safetyKey(score: number) {
 
 export function TriageCards({ result, phase, onOpenScore }: Props) {
   const { t } = useI18n()
-  const score = result?.score ?? 0
-  const stroke = !result ? 'var(--muted)' : score >= 80 ? 'var(--emerald)' : score >= 50 ? 'var(--amber)' : 'var(--crimson)'
-  const labelTone = score >= 80 ? 'emerald' : score >= 50 ? 'amber' : 'crimson'
-  const priceOk = result ? result.oracleQuorum === 'PASSED' : null
-  const rulesOk = result ? result.vectors.resolution >= 80 : null
+  const eoa = result?.kind === 'eoa'
+  const score = result?.score
+  const numeric = score ?? 0
+  const stroke = !result || score == null ? 'var(--muted)' : numeric >= 80 ? 'var(--emerald)' : numeric >= 50 ? 'var(--amber)' : 'var(--crimson)'
+  const labelTone = numeric >= 80 ? 'emerald' : numeric >= 50 ? 'amber' : 'crimson'
+  const oracleSkipped = Boolean(result?.skipped?.includes('oracle') || result?.oracleQuorum === 'N/A')
+  const resolutionSkipped = Boolean(result?.skipped?.includes('resolution') || result?.vectors.resolution == null)
+  const priceOk = !result || oracleSkipped ? null : result.oracleQuorum === 'PASSED'
+  const rulesOk = !result || resolutionSkipped ? null : (result.vectors.resolution ?? 0) >= 80
 
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid gap-3 md:grid-cols-3">
@@ -58,13 +62,19 @@ export function TriageCards({ result, phase, onOpenScore }: Props) {
             <div>
               <p className="text-[11px] font-medium text-muted-foreground">{t('triage.score')}</p>
               <p className="font-mono text-3xl font-bold tabular-nums text-foreground">
-                {result ? score : phase === 'scanning' ? '··' : '—'}
+                {result ? (score == null ? '—' : score) : phase === 'scanning' ? '··' : '—'}
                 <span className="ml-1 text-xs text-muted-foreground">/ 100</span>
               </p>
               {result ? (
-                <Tag tone={labelTone} className="mt-1">
-                  {score >= 80 ? <ShieldCheck className="size-3" /> : <ShieldAlert className="size-3" />}
-                  {t(safetyKey(score))}
+                <Tag tone={eoa ? 'muted' : labelTone} className="mt-1">
+                  {eoa ? (
+                    'EOA'
+                  ) : numeric >= 80 ? (
+                    <ShieldCheck className="size-3" />
+                  ) : (
+                    <ShieldAlert className="size-3" />
+                  )}
+                  {eoa ? 'Not a contract' : t(safetyKey(numeric))}
                 </Tag>
               ) : (
                 <p className="mt-1 text-xs text-muted-foreground">{t('triage.idle')}</p>
@@ -77,7 +87,9 @@ export function TriageCards({ result, phase, onOpenScore }: Props) {
       <motion.div variants={fadeUp}>
         <Panel interactive className="flex h-full flex-col justify-between gap-3 p-4">
           <p className="text-[11px] font-medium text-muted-foreground">{t('triage.price')}</p>
-          {priceOk === null ? (
+          {result && oracleSkipped ? (
+            <p className="text-sm text-slate-400">N/A — no oracle or price-feed surface on this target.</p>
+          ) : priceOk === null ? (
             <p className="text-sm text-muted-foreground">{t('triage.idle')}</p>
           ) : (
             <p className="flex items-start gap-2 text-sm leading-relaxed text-foreground">
@@ -91,7 +103,9 @@ export function TriageCards({ result, phase, onOpenScore }: Props) {
       <motion.div variants={fadeUp}>
         <Panel interactive className="flex h-full flex-col justify-between gap-3 p-4">
           <p className="text-[11px] font-medium text-muted-foreground">{t('triage.rules')}</p>
-          {rulesOk === null ? (
+          {result && resolutionSkipped ? (
+            <p className="text-sm text-slate-400">N/A — resolution checks do not apply to this target.</p>
+          ) : rulesOk === null ? (
             <p className="text-sm text-muted-foreground">{t('triage.idle')}</p>
           ) : (
             <p className="flex items-start gap-2 text-sm leading-relaxed text-foreground">

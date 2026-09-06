@@ -2,16 +2,18 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AppShell } from '@/components/shell/app-shell'
+import { ThemeProvider } from '@/components/shell/theme-provider'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains' })
 
 export const metadata: Metadata = {
-  title: 'PLUSE — AI Security Agent for DreamDEX Event Contracts',
+  title: 'PLUSE — DreamDEX security scanner on Somnia Shannon Testnet',
   description:
-    'Institutional-grade AI security scanner, market risk analytics, and agent trust rankings for DreamDEX event contracts on the Somnia L1 network.',
-  keywords: ['Somnia', 'DreamDEX', 'event contracts', 'smart contract audit', 'AI security agent'],
+    'Inspect DreamDEX event contracts on Somnia Shannon Testnet: safety score, price feeds, and who controls the pool. Not live on mainnet.',
+  keywords: ['Somnia Shannon Testnet', 'DreamDEX', 'event contracts', 'smart contract audit', 'PLUSE'],
   icons: { icon: [{ url: '/icon.svg', type: 'image/svg+xml' }], apple: '/apple-icon.png' },
 }
 
@@ -24,9 +26,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`dark bg-background ${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`dark ${inter.variable} ${jetbrains.variable}`} suppressHydrationWarning>
       <body>
-        <AppShell>{children}</AppShell>
+        <ThemeProvider>
+          <TooltipProvider>
+            <AppShell>{children}</AppShell>
+          </TooltipProvider>
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

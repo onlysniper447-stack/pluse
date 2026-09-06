@@ -1,17 +1,24 @@
+import { Badge } from '@/components/ui/badge'
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-export function Panel({ className, children, interactive = false, ...props }: React.HTMLAttributes<HTMLDivElement> & { interactive?: boolean }) {
+export function Panel({
+  className,
+  children,
+  interactive = false,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { interactive?: boolean }) {
   return (
-    <div
+    <Card
       className={cn(
-        'rounded-lg bg-[#121620]/60 backdrop-blur-md border border-slate-800/80 transition-all',
-        interactive && 'hover:border-emerald-500/40 hover:scale-[1.01] transition-transform',
+        'gap-0 bg-[#0A0C10] py-0',
+        interactive && 'transition-transform hover:scale-[1.01] hover:ring-primary/35',
         className,
       )}
       {...props}
     >
       {children}
-    </div>
+    </Card>
   )
 }
 
@@ -27,15 +34,15 @@ export function PanelHeader({
   className?: string
 }) {
   return (
-    <div className={cn('flex items-start justify-between gap-4 border-b border-slate-800/80 px-4 py-3', className)}>
-      <div className="flex flex-col gap-0.5">
-        {eyebrow && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{eyebrow}</span>
-        )}
-        <h2 className="text-sm font-semibold tracking-tight text-foreground">{title}</h2>
-      </div>
-      {action}
-    </div>
+    <CardHeader className={cn('border-b px-4 py-3', className)}>
+      {eyebrow ? (
+        <CardDescription className="font-mono text-[10px] uppercase tracking-[0.18em]">
+          {eyebrow}
+        </CardDescription>
+      ) : null}
+      <CardTitle className="text-sm font-semibold tracking-tight">{title}</CardTitle>
+      {action ? <CardAction>{action}</CardAction> : null}
+    </CardHeader>
   )
 }
 
@@ -48,7 +55,7 @@ const toneClass: Record<Tone, string> = {
   amber: 'border-amber/40 bg-amber/10 text-amber',
   high: 'border-high/40 bg-high/10 text-high',
   crimson: 'border-crimson/40 bg-crimson/10 text-crimson',
-  muted: 'border-slate-800 bg-muted/40 text-muted-foreground',
+  muted: 'border-border bg-muted/40 text-muted-foreground',
 }
 
 export function Tag({
@@ -61,14 +68,15 @@ export function Tag({
   children: React.ReactNode
 }) {
   return (
-    <span
+    <Badge
+      variant="outline"
       className={cn(
-        'inline-flex h-5 items-center gap-1 rounded-sm border px-1.5 font-mono text-[10px] font-medium uppercase tracking-wider',
+        'h-5 rounded-sm font-mono text-[10px] font-medium uppercase tracking-wider',
         toneClass[tone],
         className,
       )}
     >
       {children}
-    </span>
+    </Badge>
   )
 }
