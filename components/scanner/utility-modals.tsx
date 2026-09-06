@@ -67,7 +67,7 @@ export function PdfModal({ result, target, onClose }: { result: ScanResult; targ
       <div className="rounded-lg border border-emerald/30 bg-slate-900/60 p-4">
         <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-emerald">PLUSE · Executive certificate</p>
         <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{result.score} / 100</p>
-        <p className="text-sm text-muted-foreground">{result.tag} · Somnia Mainnet (5031)</p>
+        <p className="text-sm text-muted-foreground">{result.tag} · Somnia Shannon Testnet (50312)</p>
         <p className="mt-3 break-all font-mono text-[11px] text-muted-foreground">
           Target {target.slice(0, 42)}
         </p>
@@ -96,7 +96,7 @@ export function BytecodeModal({ onClose }: { onClose: () => void }) {
   }, [])
 
   const lines = [
-    'Fetching runtime bytecode @ Somnia 5031…',
+    'Fetching runtime bytecode @ Somnia Shannon 50312…',
     'Hashing solc 0.8.26 metadata…',
     'Comparing source digest ↔ on-chain bytecode…',
     'MATCH  14.2 KB  ·  0 opcode deltas',
