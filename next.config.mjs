@@ -30,7 +30,7 @@ const nextConfig = {
                 {
                   key: 'Content-Security-Policy-Report-Only',
                   value:
-                    "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://api.infra.mainnet.somnia.network wss://api.infra.mainnet.somnia.network https://rpc.somnia.network wss://api.pluse.xyz https://api.pluse.xyz",
+                    "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://api.infra.testnet.somnia.network wss://api.infra.testnet.somnia.network https://api.infra.mainnet.somnia.network wss://api.infra.mainnet.somnia.network https://rpc.somnia.network wss://api.pluse.xyz https://api.pluse.xyz",
                 },
               ],
             },

@@ -63,6 +63,12 @@ export function TopBar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <span
+            title="Somnia Shannon Testnet — PLUSE is not live on mainnet"
+            className="flex h-9 items-center rounded-full border border-amber/50 bg-amber/10 px-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-amber"
+          >
+            {t('shell.testnet')}
+          </span>
           <button
             type="button"
             onClick={toggleSidebar}

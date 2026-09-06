@@ -26,7 +26,7 @@ export function ConnectButton({ compact = false }: { compact?: boolean }) {
         <span className="relative flex size-2">
           <span className="absolute inset-0 rounded-full bg-emerald group-hover:bg-crimson" />
         </span>
-        {!compact && <span className="text-muted-foreground">{isDemo ? 'DEMO' : `${balance} SOMI`}</span>}
+        {!compact && <span className="text-muted-foreground">{isDemo ? 'DEMO' : `${balance} STT`}</span>}
         <span>{shortAddr(address)}</span>
       </motion.button>
     )
