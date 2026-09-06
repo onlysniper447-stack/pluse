@@ -21,7 +21,7 @@ export function DeveloperBanner() {
           <div>
             <p className="text-sm font-medium tracking-tight text-foreground">Personal security scorecard</p>
             <p className="text-xs text-muted-foreground">
-              Connect a SOMI wallet to load your percentile, audit history, and earned badges.
+              Connect a Somnia testnet wallet to load your percentile, audit history, and earned badges.
             </p>
           </div>
         </div>
