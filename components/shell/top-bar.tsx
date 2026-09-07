@@ -7,6 +7,7 @@ import { isNavActive, navItems } from '@/lib/nav'
 import { ConnectButton } from '@/components/web3/connect-button'
 import { useI18n } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { BrandMark } from './brand-mark'
 import { NetworkBadge } from './network-badge'
 import { useShell } from './shell-context'
@@ -37,31 +38,36 @@ export function TopBar() {
         </div>
 
         <nav aria-label="Primary" className="hidden md:flex">
-          <ul className="flex items-center">
-            {navItems.map((item, index) => {
+          <ul className="flex items-center gap-0.5 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+            {navItems.map((item) => {
               const active = isNavActive(pathname, item.href)
+              const label = t(item.labelKey)
+              const Icon = item.icon
               return (
-                <li key={item.href} className="flex items-center">
-                  {index > 0 && (
-                    <span className="px-1.5 font-mono text-[11px] text-slate-600" aria-hidden>
-                      |
-                    </span>
-                  )}
-                  <Link
-                    href={item.href}
-                    aria-current={active ? 'page' : undefined}
-                    className={cn(
-                      'relative flex h-10 items-center px-2.5 text-[13px] font-medium tracking-tight transition-all duration-200',
-                      active
-                        ? 'text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.85)]'
-                        : 'text-slate-400 hover:text-emerald-300 hover:drop-shadow-[0_0_8px_rgba(52,211,153,0.55)]',
-                    )}
-                  >
-                    {t(item.labelKey)}
-                    {active && (
-                      <span className="absolute inset-x-2.5 -bottom-px h-px bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
-                    )}
-                  </Link>
+                <li key={item.href}>
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Link
+                          href={item.href}
+                          aria-current={active ? 'page' : undefined}
+                          aria-label={label}
+                          className={cn(
+                            'relative flex size-9 items-center justify-center rounded-lg transition-all duration-200',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50',
+                            active
+                              ? 'bg-emerald-400/15 text-emerald-400 shadow-[inset_0_0_0_1px_rgba(52,211,153,0.4),0_0_16px_-4px_rgba(52,211,153,0.85)]'
+                              : 'text-slate-400 hover:bg-white/[0.05] hover:text-emerald-300',
+                          )}
+                        />
+                      }
+                    >
+                      <Icon className="size-5" strokeWidth={1.75} />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" sideOffset={8}>
+                      {label}
+                    </TooltipContent>
+                  </Tooltip>
                 </li>
               )
             })}
